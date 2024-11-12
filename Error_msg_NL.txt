@@ -1,0 +1,65 @@
+# ErrCode   Err text
+# ------------------------------------------------
+FSY0001	Kan het bestand %s niet openen om te lezen
+FSY0002	Kan het bestand %s niet openen om te schrijven
+FSY0003	Kan het bestand %s niet openen om toe te voegen
+FSY0004	Kan het bestand %s niet openen
+FSY0005	Kan niet naar het bestand %s schrijven
+FSY0006	Kan niet lezen uit het bestand %s
+FSY0007	Kan niet worden toegevoegd aan het bestand %s
+MEA0027	Onjuiste meting
+USR0001	Gebruiker %s heeft geen toegang
+ABC0011	Dit is een test
+ABC000x	Test 2
+DIV0001	Delen door 0 fout
+MEM0001	Kan geen geheugen toewijzen
+GEN0001	Er is een onbekende fout opgetreden.
+GEN0002	Bediening is onverwacht mislukt.
+GEN0003	Ongeldige invoer opgegeven.
+GEN0004	Verplicht veld ontbreekt.
+GEN0005	Er is een time-out opgetreden voor actie.
+AUT1001	Ongeldige gebruikersnaam of wachtwoord.
+AUT1002	Gebruikersaccount is vergrendeld.
+AUT1003	Token is verlopen.
+AUT1004	Onvoldoende machtigingen.
+AUT1005	Kan gebruiker niet verifiëren.
+DBE2001	Databaseverbinding is mislukt.
+DBE2002	Fout bij het ophalen van gegevens.
+DBE2003	Fout bij het invoeren van gegevens.
+DBE2004	Fout bij het bijwerken van gegevens.
+DBE2005	Fout bij het verwijderen van gegevens.
+NET3001	Netwerkverbinding verbroken.
+NET3002	Kan hostnaam niet omzetten.
+NET3003	Time-out tijdens het verbinden met de server.
+NET3004	Netwerkprotocol komt niet overeen.
+NET3005	Onvoldoende bandbreedte.
+FSE4001	Bestand niet gevonden.
+FSE4002	Kan bestand niet lezen.
+FSE4003	Kan niet naar het bestand schrijven.
+FSE4004	Schijfruimte is vol.
+FSE4005	Bestand pad is ongeldig.
+IOE5001	Overloop van invoerbuffer.
+IOE5002	Overloop van de uitgangsbuffer.
+IOE5003	I/O-apparaat reageert niet.
+IOE5004	Kan niet lezen van het apparaat.
+IOE5005	Kan niet naar het apparaat schrijven.
+CFG6001	Configuratiebestand ontbreekt.
+CFG6002	Ongeldige configuratie-indeling.
+CFG6003	Configuratiesleutel niet gevonden.
+CFG6004	Kan configuratie niet laden.
+CFG6005	Configuratie-instelling is afgeschaft.
+SYN7001	Syntaxisfout in de opdracht.
+SYN7002	Onverwacht token tegengekomen.
+SYN7003	Ontbrekende puntkomma.
+SYN7004	Ongeëvenaarde haakjes.
+SYN7005	Ongeldig teken in invoer.
+PER8001	Toestemming geweigerd.
+PER8002	Alleen-lezen bestandssysteem.
+PER8003	Onvoldoende gebruikersrechten.
+PER8004	Beheerderstoegang vereist.
+PER8005	Werking beperkt door beleid.
+RES9001	Onvoldoende geheugen beschikbaar.
+RES9002	Resourcelimiet overschreden.
+RES9003	CPU-quotum bereikt.
+RES9004	Te veel geopende bestanden.
+RES9005	bron is vergrendeld door een ander proces.

@@ -1,0 +1,65 @@
+# ErrCode   Err text
+# ------------------------------------------------
+FSY0001	Impossible d'ouvrir le fichier %s à lire
+FSY0002	Impossible d'ouvrir le fichier %s à écrire
+FSY0003	Impossible d'ouvrir le fichier %s à ajouter
+FSY0004	Impossible d'ouvrir le fichier %s
+FSY0005	Impossible d'écrire dans le fichier %s
+FSY0006	Impossible de lire à partir du fichier %s
+FSY0007	Ne peut pas être ajouté au fichier %s
+MEA0027	Mesure incorrecte
+USR0001	L'utilisateur %s ne peut pas accéder
+ABC0011	Il s'agit d'un test
+ABC000x	Test 2
+DIV0001	Erreur de division par 0
+MEM0001	Impossible d'allouer de la mémoire
+GEN0001	Une erreur inconnue s'est produite.
+GEN0002	L'opération a échoué de manière inattendue.
+GEN0003	Entrée non valide spécifiée.
+GEN0004	Le champ Obligatoire est manquant.
+GEN0005	L'action a expiré.
+AUT1001	Nom d'utilisateur ou mot de passe non valide.
+AUT1002	Compte utilisateur est verrouillé.
+AUT1003	Jeton a expiré.
+AUT1004	Autorisations insuffisantes.
+AUT1005	Impossible d'authentifier l'utilisateur.
+DBE2001	Échec de la connexion à la base de données.
+DBE2002	Erreur d'extraction de données.
+DBE2003	Erreur de saisie de données.
+DBE2004	Erreur lors de la mise à jour des données.
+DBE2005	Erreur de suppression des données.
+NET3001	Connexion réseau perdue.
+NET3002	Impossible de résoudre le nom d'hôte.
+NET3003	Délai d'expiration lors de la connexion au serveur.
+NET3004	protocole réseau ne correspond pas.
+NET3005	Bande passante insuffisante.
+FSE4001	Fichier introuvable.
+FSE4002	Impossible de lire le fichier.
+FSE4003	Impossible d'écrire dans le fichier.
+FSE4004	L'espace disque est plein.
+FSE4005	Le chemin d'accès au fichier n'est pas valide.
+IOE5001	Dépassement de la mémoire tampon d'entrée.
+IOE5002	Dépassement de la mémoire tampon de sortie.
+IOE5003	périphérique d'E/S ne répond pas.
+IOE5004	Impossible de lire à partir de l'appareil.
+IOE5005	Impossible d'écrire sur le périphérique.
+CFG6001	Fichier de configuration est manquant.
+CFG6002	Format de configuration non valide.
+CFG6003	Clé de configuration introuvable.
+CFG6004	Impossible de charger la configuration.
+CFG6005	Paramètre de configuration est obsolète.
+SYN7001	Erreur de syntaxe dans la commande.
+SYN7002	Jeton rencontré de manière inattendue.
+SYN7003	Point-virgule manquant.
+SYN7004	parenthèses inégalées.
+SYN7005	Caractère non valide dans la saisie.
+PER8001	Autorisation refusée.
+PER8002	Système de fichiers en lecture seule.
+PER8003	Droits d'utilisation insuffisants.
+PER8004	Accès administrateur requis.
+PER8005	Fonctionnement limité par la politique.
+RES9001	Mémoire disponible insuffisante.
+RES9002	Limite de ressources dépassées.
+RES9003	Quota CPU atteint.
+RES9004	Trop de fichiers ouverts.
+RES9005	Ressource est verrouillée par un autre processus.

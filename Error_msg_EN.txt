@@ -1,0 +1,65 @@
+# ErrCode   Err text
+# ------------------------------------------------
+FSY0001	Could not open the file %s for reading
+FSY0002	Could not open the file %s for writing
+FSY0003	Could not open the file %s for appending
+FSY0004	Could not open the file %s
+FSY0005	Could not write to the file %s
+FSY0006	Could not read from the file %s
+FSY0007	Could not append to the file %s
+MEA0027	Incorrect measurement
+USR0001	User %s has no access
+ABC0011	This is a test
+ABC000x	Test 2
+DIV0001	Division by 0 error
+MEM0001	Can not allocatie memory
+GEN0001	Unknown error occurred.
+GEN0002	Operation failed unexpectedly.
+GEN0003	Invalid input provided.
+GEN0004	Required field is missing.
+GEN0005	Action timed out.
+AUT1001	Invalid username or password.
+AUT1002	User account is locked.
+AUT1003	Token has expired.
+AUT1004	Insufficient permissions.
+AUT1005	Failed to authenticate user.
+DBE2001	Database connection failed.
+DBE2002	Data retrieval error.
+DBE2003	Data insertion error.
+DBE2004	Data update error.
+DBE2005	Data deletion error.
+NET3001	Network connection lost.
+NET3002	Unable to resolve hostname.
+NET3003	Timeout while connecting to server.
+NET3004	Network protocol mismatch.
+NET3005	Insufficient bandwidth.
+FSE4001	File not found.
+FSE4002	Unable to read file.
+FSE4003	Unable to write to file.
+FSE4004	Disk space is full.
+FSE4005	File path is invalid.
+IOE5001	Input buffer overflow.
+IOE5002	Output buffer overflow.
+IOE5003	I/O device not responding.
+IOE5004	Failed to read from device.
+IOE5005	Failed to write to device.
+CFG6001	Configuration file is missing.
+CFG6002	Invalid configuration format.
+CFG6003	Configuration key not found.
+CFG6004	Failed to load configuration.
+CFG6005	Configuration setting is deprecated.
+SYN7001	Syntax error in command.
+SYN7002	Unexpected token encountered.
+SYN7003	Missing semicolon.
+SYN7004	Unmatched parentheses.
+SYN7005	Invalid character in input.
+PER8001	Permission denied.
+PER8002	Read-only file system.
+PER8003	Insufficient user privileges.
+PER8004	Admin access required.
+PER8005	Operation restricted by policy.
+RES9001	Insufficient memory available.
+RES9002	Resource limit exceeded.
+RES9003	CPU quota reached.
+RES9004	Too many open files.
+RES9005	Resource is locked by another process.
