@@ -1,8 +1,8 @@
 #! /bin/bash
 
 #Declare the variables
-HOST=192.168.1.23
-TOPIC=FD/ERROR
+HOST=192.168.0.102
+TOPIC=errors/receive/ruben
 SLEEP=1
 PROG_NAME=DUVEL
 SEV_CODE=1
