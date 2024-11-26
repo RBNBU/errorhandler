@@ -10,7 +10,6 @@
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
-                "-I/usr/local/include",
                 "-L/usr/local/lib",
                 "-lpaho-mqtt3c"
             ],
