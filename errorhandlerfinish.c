@@ -9,7 +9,9 @@
 #define SUB_TOPIC "errors/receive/ruben"               // MQTT subscription topic
 #define PUB_TOPIC "errors/processed/ruben"             // MQTT publication topic
 #define QOS 1                                    // Quality of Service level
-#define TIMEOUT 10000L                           // Timeout in milliseconds
+#define TIMEOUT 100L                           // Timeout in milliseconds
+#define ERR_OUT_LEN 1024                    // Length for outgoing error messages
+
 
 typedef struct ErrorNode {
     char code[10];
@@ -19,6 +21,7 @@ typedef struct ErrorNode {
 
 volatile MQTTClient_deliveryToken deliveredtoken;
 ErrorNode* errors = NULL;
+
 void handleError(const char* lang, const char* deviceName, const char* severity, const char* errorCode, const char* extraInfo, MQTTClient* client);
 void logError(const char* errorMsg);
 ErrorNode* readErrorFile(const char* fileName);
@@ -28,7 +31,7 @@ int msgarrvd(void *context, char *topicName, int topicLen, MQTTClient_message *m
 void connlost(void *context, char *cause);
 
 int main(int argc, char* argv[]) {
-    printf("Program started\n"); // Debug output
+    printf("Program started\n");
 
     if (argc < 2) {
         logError("Usage: <program_name> <language>");
@@ -39,66 +42,47 @@ int main(int argc, char* argv[]) {
     char errorFile[256];
     sprintf(errorFile, "./Error_msg_%s.txt", lang);
 
-    printf("Loading error file: %s\n", errorFile); // Debug output
-
+    printf("Loading error file: %s\n", errorFile);
     errors = readErrorFile(errorFile);
     if (errors == NULL) {
         logError("Failed to read error messages from file");
         return -1;
     }
 
-    // Initialize the MQTT client
-    printf("Initializing MQTT client\n"); // Debug output
     MQTTClient client;
     MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
     int rc;
 
-    rc = MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
-    if (rc != MQTTCLIENT_SUCCESS) {
-        logError("Failed to create MQTT client");
-        freeErrorList(errors);
-        return -1;
-    }
-
+    MQTTClient_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
     conn_opts.keepAliveInterval = 20;
     conn_opts.cleansession = 1;
 
-    printf("Setting MQTT callbacks\n"); // Debug output
-    MQTTClient_setCallbacks(client, &client, connlost, msgarrvd, delivered);
+    MQTTClient_setCallbacks(client, client, connlost, msgarrvd, delivered);
 
-    printf("Connecting to MQTT broker\n"); // Debug output
-    rc = MQTTClient_connect(client, &conn_opts);
-    if (rc != MQTTCLIENT_SUCCESS) {
-        printf("Failed to connect to MQTT broker, return code %d\n", rc); // Debug output
+    if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS) {
+        printf("Failed to connect, return code %d\n", rc);
         handleError(lang, "noDevice", "0", "002", "Failed to connect to MQTT broker", &client);
         freeErrorList(errors);
         MQTTClient_destroy(&client);
         return -1;
-    } else {
-        printf("Successfully connected to MQTT broker\n"); // Debug output
     }
 
-    printf("Subscribing to topic %s\n", SUB_TOPIC); // Debug output
-    rc = MQTTClient_subscribe(client, SUB_TOPIC, QOS);
-    if (rc != MQTTCLIENT_SUCCESS) {
-        printf("Failed to subscribe to topic, return code %d\n", rc); // Debug output
+    printf("Subscribing to topic %s\n", SUB_TOPIC);
+    if ((rc = MQTTClient_subscribe(client, SUB_TOPIC, QOS)) != MQTTCLIENT_SUCCESS) {
+        printf("Failed to subscribe, return code %d\n", rc);
         handleError(lang, "noDevice", "0", "003", "Failed to subscribe to topic", &client);
         freeErrorList(errors);
         MQTTClient_destroy(&client);
         return -1;
-    } else {
-        printf("Successfully subscribed to topic %s\n", SUB_TOPIC); // Debug output
     }
 
     while (1) {
-        printf("Calling MQTTClient_yield()\n"); // Debug output
         MQTTClient_yield();
     }
 
     MQTTClient_disconnect(client, 10000);
     MQTTClient_destroy(&client);
     freeErrorList(errors);
-
     return 0;
 }
 
@@ -118,44 +102,34 @@ void handleError(const char* lang, const char* deviceName, const char* severity,
         current = current->next;
     }
 
+    char error_out[ERR_OUT_LEN] = "";
+
     if (strlen(error) == 0) {
-        char errMsg[256];
-        sprintf(errMsg, "Error code %s not found", errorCode);
-        logError(errMsg);
-        return;
+        // If error code not found, log it and include extra info
+        snprintf(error_out, sizeof(error_out), "Error code %s not found; %s", errorCode, extraInfo);
+    } else {
+        // Add timestamp to the outgoing message
+        time_t now = time(NULL);
+        struct tm *t = localtime(&now);
+        char date[20];
+        strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", t);
+
+        // Prepare the message to be sent
+        printf("Preparing payload with deviceName: %s, severity: %s errorCode: %s, error: %s, extraInfo: %s, date: %s\n", 
+            deviceName, severity, errorCode, error, extraInfo, date); // Debug output
+
+        snprintf(error_out, sizeof(error_out), "%s;%s;%s;%s;%s;%s", deviceName, severity, errorCode, error, extraInfo, date);
     }
 
-    // Add extra explanation and timestamp
-    time_t now = time(NULL);
-    struct tm *t = localtime(&now);
-    char date[20];
-    strftime(date, sizeof(date), "%Y-%m-%d %H:%M:%S", t);
-
-    // Prepare the message to be sent
-    char payload[512];
-    printf("Preparing payload with deviceName: %s, severity: %s errorCode: %s, error: %s, extraInfo: %s, date: %s\n", deviceName, severity, errorCode, error, extraInfo, date); // Debug output
-
-    if (snprintf(payload, sizeof(payload), "%s;%s;%s;%s;%s;%s", deviceName, severity, errorCode, error, extraInfo, date) >= sizeof(payload)) {
-        logError("Payload too large");
-        return;
-    }
-
-    printf("Prepared payload: %s\n", payload); // Debug output
-
-    // Ensure payload duplication
-    char* payload_dup = strdup(payload);
-    if (payload_dup == NULL) {
-        logError("Failed to duplicate payload");
-        return;
-    }
+    printf("Prepared error_out: %s\n", error_out); // Debug output
 
     MQTTClient_message pubmsg = MQTTClient_message_initializer;
-    pubmsg.payload = payload_dup;
-    pubmsg.payloadlen = (int)strlen(payload_dup);
+    pubmsg.payload = error_out;
+    pubmsg.payloadlen = (int)strlen(error_out);
     pubmsg.qos = QOS;
     pubmsg.retained = 0;
 
-    printf("Publishing message with payload: %s\n", payload_dup); // Debug output
+    printf("Publishing error_out: %s\n", error_out); // Debug output
 
     MQTTClient_deliveryToken token;
     int rc = MQTTClient_publishMessage(client, PUB_TOPIC, &pubmsg, &token);
@@ -165,13 +139,12 @@ void handleError(const char* lang, const char* deviceName, const char* severity,
         rc = MQTTClient_waitForCompletion(client, token, TIMEOUT);
         if (rc == MQTTCLIENT_SUCCESS) {
             printf("Error message with delivery token %d delivered\n", token);
-        } else {
+        } /*else {
             logError("Failed to deliver error message");
-        }
+        }*/
     }
-
-    free(payload_dup); // Free the duplicated payload
 }
+
 
 
 void logError(const char* errorMsg) {
@@ -205,12 +178,12 @@ ErrorNode* readErrorFile(const char* fileName) {
         // Expecting lines in the format "ErrCode\tErr text"
         char* code = strtok(line, "\t");
         char* message = strtok(NULL, "\n");
-        if (code != NULL && message != NULL) {
+        if (code && message) {
             strcpy(newNode->code, code);
             strcpy(newNode->message, message);
             newNode->next = NULL;
 
-            if (tail == NULL) {
+            if (!tail) {
                 head = tail = newNode;
             } else {
                 tail->next = newNode;
@@ -226,7 +199,7 @@ ErrorNode* readErrorFile(const char* fileName) {
 }
 
 void freeErrorList(ErrorNode* head) {
-    while (head != NULL) {
+    while (head) {
         ErrorNode* temp = head;
         head = head->next;
         free(temp);
@@ -239,26 +212,19 @@ void delivered(void *context, MQTTClient_deliveryToken dt) {
 }
 
 int msgarrvd(void *context, char *topicName, int topicLen, MQTTClient_message *message) {
-    if (context == NULL) {
-        logError("NULL context received in msgarrvd");
-        return 0;
-    }
+    printf("Message arrived: %.*s\n", message->payloadlen, (char*)message->payload);
 
-    printf("Message arrived on topic %s: %.*s\n", topicName, message->payloadlen, (char*)message->payload);
+    char error_in[256];
+    snprintf(error_in, sizeof(error_in), "%.*s", message->payloadlen, (char*)message->payload);
 
-    char severity[10] = "", deviceName[256] = "", errorCode[10] = "", optionalText[256] = "";
-    int parsed = sscanf((char*)message->payload, "%9[^;];%255[^;];%9[^;];%255[^\n]", severity, deviceName, errorCode, optionalText);
+    char severity[10] = "0";
+    char deviceName[256] = "UnknownDevice";
+    char errorCode[10] = "000";
+    char extraInfo[256] = "NoExtraInfo";
 
-    if (parsed < 3) {
-        logError("Failed to parse MQTT message payload");
-        MQTTClient_freeMessage(&message);
-        MQTTClient_free(topicName);
-        return 0;
-    }
+    sscanf(error_in, "%9[^;];%255[^;];%9[^;];%255[^\n]", severity, deviceName, errorCode, extraInfo);
 
-    printf("Parsed data - Severity: %s, Device Name: %s, Error Code: %s, Optional Text: %s\n", severity, deviceName, errorCode, optionalText);
-
-    handleError("EN", deviceName, severity, errorCode, optionalText, (MQTTClient*)context);
+    handleError("EN", deviceName, severity, errorCode, extraInfo, (MQTTClient*)context);
 
     MQTTClient_freeMessage(&message);
     MQTTClient_free(topicName);
