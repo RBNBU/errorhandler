@@ -1,0 +1,36 @@
+Start programma
+Controleer of de taalparameter is opgegeven
+    Als niet opgegeven, toon foutbericht en beëindig programma
+
+Laad foutenbestand gebaseerd op de opgegeven taal
+    Als foutenbestand niet kan worden geladen
+        Toon foutbericht en beëindig programma
+
+Initialiseer MQTT-client
+    Stel verbinding opties in (bijv. keep-alive, cleansession)
+
+Probeer verbinding te maken met de MQTT-broker
+    Als verbinding mislukt
+        Stuur foutmelding en beëindig programma
+
+Abonneer op het opgegeven MQTT-topic
+    Als abonnement mislukt
+        Stuur foutmelding en beëindig programma
+
+Start oneindige lus om inkomende berichten te verwerken
+    Wacht op berichten via MQTT
+        Bij ontvangst van een bericht:
+            Parse het bericht naar velden (severity, deviceName, errorCode, extraInfo)
+            Zoek foutbeschrijving op basis van errorCode in foutenlijst
+            Als foutbeschrijving niet wordt gevonden
+                Maak een standaard foutbericht
+            Voeg timestamp toe aan het bericht
+            Publiceer foutbericht naar het publicatie-topic
+
+Bij verbinding verlies:
+    Log fout en toon oorzaak
+
+Bij programma afsluiting:
+    Ontkoppel van MQTT-broker
+    Maak geheugen vrij voor foutenlijst
+Stop programma

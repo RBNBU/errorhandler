@@ -139,9 +139,7 @@ void handleError(const char* lang, const char* deviceName, const char* severity,
         rc = MQTTClient_waitForCompletion(client, token, TIMEOUT);
         if (rc == MQTTCLIENT_SUCCESS) {
             printf("Error message with delivery token %d delivered\n", token);
-        } /*else {
-            logError("Failed to deliver error message");
-        }*/
+        }
     }
 }
 
@@ -217,7 +215,7 @@ int msgarrvd(void *context, char *topicName, int topicLen, MQTTClient_message *m
     char error_in[256];
     snprintf(error_in, sizeof(error_in), "%.*s", message->payloadlen, (char*)message->payload);
 
-    char severity[10] = "0";
+    char severity[10] = "0"; //defaults for arguments
     char deviceName[256] = "UnknownDevice";
     char errorCode[10] = "000";
     char extraInfo[256] = "NoExtraInfo";
